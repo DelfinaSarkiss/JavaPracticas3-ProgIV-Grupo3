@@ -4,6 +4,7 @@ import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.ResultSet;
 import java.sql.Statement;
+import java.util.ArrayList;
 
 import entidad.Categoria;
 
@@ -58,5 +59,68 @@ public class DaoCategoria {
 			e.printStackTrace();
 		}
 		return c;
+	}
+	
+	public ArrayList<Categoria> obtenerTodasLasCategorias()
+	{
+		ArrayList<Categoria> lCategoria = new ArrayList<Categoria>();
+		Connection cn = null;
+		try
+		{
+			cn = DriverManager.getConnection(host+dbName,user,pass);
+			String query = "select * from categoria";
+			Statement st = cn.createStatement();
+			ResultSet rs = st.executeQuery(query);
+			while(rs.next())
+			{
+				Categoria c = new Categoria();
+				c.setId(rs.getInt("id"));
+				c.setNombre(rs.getString("nombre"));
+				lCategoria.add(c);
+			}
+		}
+		catch(Exception e)
+		{
+			e.printStackTrace();
+		}
+		return lCategoria;
+	} 
+	
+	public int eliminarCategoria(int id)
+	{
+		String query = "Delete from Categoria where id=" + id;
+		
+		Connection cn = null;
+		int filas = 0;
+		try
+		{
+			cn = DriverManager.getConnection(host + dbName, user, pass);
+			Statement st = cn.createStatement();
+			filas = st.executeUpdate(query);
+		}
+		catch(Exception e)
+		{
+			e.printStackTrace();
+		}
+		return filas;
+	}
+	
+	public int modificarCategoria(Categoria categoria)
+	{
+		String query = "Update Categoria set nombre='" + categoria.getNombre() + "' where id=" + categoria.getId();
+		
+		Connection cn = null;
+		int filas = 0;
+		try
+		{
+			cn = DriverManager.getConnection(host + dbName, user, pass);
+			Statement st = cn.createStatement();
+			filas = st.executeUpdate(query);
+		}
+		catch(Exception e)
+		{
+			e.printStackTrace();
+		}
+		return filas;
 	}
 }
