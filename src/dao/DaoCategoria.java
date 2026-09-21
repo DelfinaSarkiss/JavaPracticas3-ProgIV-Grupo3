@@ -13,7 +13,7 @@ public class DaoCategoria {
 	private String host = "jdbc:mysql://localhost:3306/";
 	private String user = "root";
 	private String pass = "root";
-	private String dbName = "dbInventario";
+	private String dbName = "bdInventario";
 	
 	public DaoCategoria()
 	{
@@ -21,7 +21,7 @@ public class DaoCategoria {
 	
 	public int agregarCategoria(Categoria categoria)
 	{
-		String query = "Insert into Categoria(nombre) values ('"+categoria.getNombre()+"')";
+		String query = "Insert into Categorias(Nombre) values ('"+categoria.getNombre()+"')";
 		
 		Connection cn = null;
 		int filas = 0;
@@ -48,11 +48,11 @@ public class DaoCategoria {
 		{
 			cn = DriverManager.getConnection(host+dbName,user,pass);
 			Statement st = cn.createStatement();
-			String query = "Select * from Categoria where id="+id;
+			String query = "Select * from Categorias where IdCategoria="+id;
 			ResultSet rs = st.executeQuery(query);
 			rs.next();
-			c.setNombre(rs.getString("nombre"));
-			c.setId(rs.getInt("id"));
+			c.setNombre(rs.getString("Nombre"));
+			c.setId(rs.getInt("IdCategoria"));
 		}
 		catch(Exception e)
 		{
@@ -68,14 +68,14 @@ public class DaoCategoria {
 		try
 		{
 			cn = DriverManager.getConnection(host+dbName,user,pass);
-			String query = "select * from categoria";
+			String query = "select * from Categorias";
 			Statement st = cn.createStatement();
 			ResultSet rs = st.executeQuery(query);
 			while(rs.next())
 			{
 				Categoria c = new Categoria();
-				c.setId(rs.getInt("id"));
-				c.setNombre(rs.getString("nombre"));
+				c.setId(rs.getInt("IdCategoria"));
+				c.setNombre(rs.getString("Nombre"));
 				lCategoria.add(c);
 			}
 		}
@@ -88,7 +88,7 @@ public class DaoCategoria {
 	
 	public int eliminarCategoria(int id)
 	{
-		String query = "Delete from Categoria where id=" + id;
+		String query = "Delete from Categorias where IdCategoria=" + id;
 		
 		Connection cn = null;
 		int filas = 0;
@@ -107,7 +107,7 @@ public class DaoCategoria {
 	
 	public int modificarCategoria(Categoria categoria)
 	{
-		String query = "Update Categoria set nombre='" + categoria.getNombre() + "' where id=" + categoria.getId();
+		String query = "Update Categorias set Nombre='" + categoria.getNombre() + "' where IdCategoria=" + categoria.getId();
 		
 		Connection cn = null;
 		int filas = 0;

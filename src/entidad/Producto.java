@@ -6,24 +6,24 @@ public class Producto {
 	private String nombre;
 	private double precio;
 	private int stock;
-	private int id;
+	private int idCategoria;
 	
 	public Producto() 
 	{}
 
-	public Producto(String codigo, String nombre, double precio, int stock, int id) {
+	public Producto(String codigo, String nombre, double precio, int stock, int idCategoria) {
 		super();
 		this.codigo = codigo;
 		this.nombre = nombre;
 		this.precio = precio;
 		this.stock = stock;
-		this.id = id;
+		this.idCategoria = idCategoria;
 	}
 
 	@Override
 	public String toString() {
-		return "Producto [codigo=" + codigo + ", nombre=" + nombre + ", precio=" + precio + ", stock=" + stock + ", id="
-				+ id + "]";
+		return "Producto [codigo=" + codigo + ", nombre=" + nombre + ", precio=" + precio + ", stock=" + stock
+				+ ", idCategoria=" + idCategoria + "]";
 	}
 
 	public String getCodigo() {
@@ -58,12 +58,12 @@ public class Producto {
 		this.stock = stock;
 	}
 
-	public int getId() {
-		return id;
+	public int getIdCategoria() {
+		return idCategoria;
 	}
 
-	public void setId(int id) {
-		this.id = id;
+	public void setIdCategoria(int idCategoria) {
+		this.idCategoria = idCategoria;
 	}
 	
 	
