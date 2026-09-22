@@ -79,14 +79,14 @@ public class DaoProducto {
 	}
 	
 	
-public ArrayList<Producto> obtenerTodosLosProductos(){
-	ArrayList<Producto> lista = new ArrayList<Producto>();
-	String query = "SELECT * FROM Productos";
+	public ArrayList<Producto> obtenerTodosLosProductos(){
+		ArrayList<Producto> lista = new ArrayList<Producto>();
+		String query = "SELECT * FROM Productos";
 	
-	try(Connection cn = DriverManager.getConnection(host + dbName, user, pass);
+		try(Connection cn = DriverManager.getConnection(host + dbName, user, pass);
 			PreparedStatement st = cn.prepareStatement(query);
 			ResultSet rs = st.executeQuery())
-	{
+		{
 		while (rs.next())
 		{
 			Producto p = new Producto();
@@ -105,24 +105,5 @@ public ArrayList<Producto> obtenerTodosLosProductos(){
 	
 	return lista;
 	
-	
 }
-
-	public void agregarUnProducto() {
-		Producto producto1 = new Producto("prod1", "Shampoo", 1500.99, 18, 1);
-
-		int filas = this.agregarProducto(producto1);
-
-		if(filas ==1)
-			System.out.println("Producto agregado");
-		else
-			System.out.println("Producto no agregado");
-
-
-}
-	public static void main(String[] args) {
-	    DaoProducto dao = new DaoProducto();
-	    dao.agregarUnProducto();
-	}
-	
 }
