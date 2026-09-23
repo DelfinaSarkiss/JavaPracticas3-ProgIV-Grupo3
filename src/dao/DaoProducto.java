@@ -1,6 +1,7 @@
 package dao;
 
 import java.sql.Connection;
+import java.sql.CallableStatement;
 import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -25,6 +26,27 @@ public class DaoProducto {
 
 		try (Connection cn = DriverManager.getConnection(host + dbName, user, pass);
 			 PreparedStatement st = cn.prepareStatement(query))
+		{
+			st.setString(1, producto.getCodigo());
+			st.setString(2, producto.getNombre());
+			st.setDouble(3, producto.getPrecio());
+			st.setInt(4, producto.getStock());
+			st.setInt(5, producto.getIdCategoria());
+			return st.executeUpdate();
+		}
+		catch (Exception e)
+		{
+			e.printStackTrace();
+			return 0;
+		}
+	}
+
+	public int agregarProductoConProcedimiento(Producto producto)
+	{
+		String procedimiento = "{CALL sp_AgregarProducto(?, ?, ?, ?, ?)}";
+
+		try (Connection cn = DriverManager.getConnection(host + dbName, user, pass);
+			 CallableStatement st = cn.prepareCall(procedimiento))
 		{
 			st.setString(1, producto.getCodigo());
 			st.setString(2, producto.getNombre());

@@ -1,6 +1,7 @@
 package main;
 
 import java.util.ArrayList;
+
 import dao.DaoCategoria;
 import dao.DaoProducto;
 import entidad.Categoria;
@@ -10,194 +11,148 @@ public class Principal {
 
     public static void main(String[] args) {
         DaoCategoria daoCategoria = new DaoCategoria();
-
-        // ==========================
-        // ABML DE CATEGORÍAS
-        // ==========================
-
-        System.out.println("===== ALTA DE CATEGORÍA =====");
-
-        Categoria categoria = new Categoria();
-        categoria.setNombre("Limpieza");
-
-        int filas = daoCategoria.agregarCategoria(categoria);
-
-        if (filas == 1) {
-            System.out.println("Categoría agregada correctamente.");
-        } else {
-            System.out.println("No se pudo agregar la categoría.");
-        }
-
-        System.out.println("\n===== LISTADO DE CATEGORÍAS =====");
-
-        ArrayList<Categoria> categorias = daoCategoria.obtenerTodasLasCategorias();
-
-        for (Categoria c : categorias) {
-            System.out.println(c);
-        }
-
-        System.out.println("\n===== MODIFICACIÓN DE CATEGORÍA =====");
-
-        if (!categorias.isEmpty()) {
-            Categoria categoriaModificar = categorias.get(categorias.size() - 1);
-            categoriaModificar.setNombre("Productos de Limpieza");
-
-            filas = daoCategoria.modificarCategoria(categoriaModificar);
-
-            if (filas == 1) {
-                System.out.println("Categoría modificada correctamente.");
-            } else {
-                System.out.println("No se pudo modificar la categoría.");
-            }
-        }
-
-        System.out.println("\n===== LISTADO DESPUÉS DE MODIFICAR =====");
-
-        categorias = daoCategoria.obtenerTodasLasCategorias();
-
-        for (Categoria c : categorias) {
-            System.out.println(c);
-        }
-        /*
-        System.out.println("\n===== BAJA DE CATEGORÍA =====");
-
-        if (!categorias.isEmpty()) {
-            Categoria categoriaEliminar = categorias.get(categorias.size() - 1);
-
-            filas = daoCategoria.eliminarCategoria(categoriaEliminar.getId());
-
-            if (filas == 1) {
-                System.out.println("Categoría eliminada correctamente.");
-            } else {
-                System.out.println("No se pudo eliminar la categoría.");
-            }
-        }
-
-        System.out.println("\n===== LISTADO FINAL CATEGORÍAS =====");
-
-        categorias = daoCategoria.obtenerTodasLasCategorias();
-
-        for (Categoria c : categorias) {
-            System.out.println(c);
-        }
-		*/
-        // ==========================
-        // ABML DE PRODUCTOS
-        // ==========================
-
         DaoProducto daoProducto = new DaoProducto();
+        String identificador = String.valueOf(System.currentTimeMillis());
 
-        System.out.println("\n================================");
-        System.out.println("        ABML DE PRODUCTOS");
-        System.out.println("================================");
+        probarAbmlCategorias(daoCategoria, identificador);
 
-        // ==========================
-        // OBTENER UNA CATEGORÍA
-        // ==========================
-
-        ArrayList<Categoria> categoriasDisponibles = daoCategoria.obtenerTodasLasCategorias();
-
-        if (categoriasDisponibles.isEmpty()) {
-            System.out.println("No hay categorías disponibles.");
-            System.out.println("Debe existir al menos una categoría para agregar un producto.");
+        ArrayList<Categoria> categorias = cargarDiezCategorias(daoCategoria, identificador);
+        if (categorias.size() != 10) {
+            System.out.println("No se pudieron cargar las 10 categorias.");
             return;
         }
 
-        int idCategoria = categoriasDisponibles.get(0).getId();
+        ArrayList<Producto> productos = cargarDiezProductos(daoProducto, categorias, identificador);
+        probarAbmlProductos(daoProducto, productos);
+    }
 
-        System.out.println("Categoría utilizada: " + categoriasDisponibles.get(0).getNombre());
+    private static void probarAbmlCategorias(DaoCategoria daoCategoria, String identificador) {
+        System.out.println("===== ABML DE CATEGORIAS =====");
 
-        // ==========================
-        // ALTA DE PRODUCTO
-        // ==========================
+        Categoria categoria = new Categoria();
+        categoria.setNombre("Categoria prueba " + identificador);
+        int filas = daoCategoria.agregarCategoria(categoria);
+        System.out.println(filas == 1 ? "Alta correcta." : "No se pudo realizar el alta.");
 
-        System.out.println("\n===== ALTA DE PRODUCTO =====");
-
-        String codigo = "P" + System.currentTimeMillis();
-
-        Producto producto = new Producto(
-                codigo,
-                "Shampoo",
-                1500.99,
-                18,
-                idCategoria
+        categoria = buscarCategoria(
+                daoCategoria.obtenerTodasLasCategorias(),
+                categoria.getNombre()
         );
 
-        int filasProducto = daoProducto.agregarProducto(producto);
-
-        if (filasProducto == 1) {
-            System.out.println("Producto agregado correctamente.");
-            System.out.println(producto);
-        } else {
-            System.out.println("No se pudo agregar el producto.");
+        if (categoria == null) {
+            System.out.println("No se encontro la categoria de prueba.");
+            return;
         }
 
-        // ==========================
-        // LISTADO DE PRODUCTOS
-        // ==========================
+        System.out.println("Listado: " + categoria);
 
+        categoria.setNombre("Categoria modificada " + identificador);
+        filas = daoCategoria.modificarCategoria(categoria);
+        System.out.println(filas == 1 ? "Modificacion correcta." : "No se pudo modificar.");
+
+        filas = daoCategoria.eliminarCategoria(categoria.getId());
+        System.out.println(filas == 1 ? "Baja correcta." : "No se pudo realizar la baja.");
+    }
+
+    private static ArrayList<Categoria> cargarDiezCategorias(DaoCategoria daoCategoria,
+                                                              String identificador) {
+        System.out.println("\n===== CARGA DE 10 CATEGORIAS =====");
+        ArrayList<String> nombres = new ArrayList<String>();
+
+        for (int i = 1; i <= 10; i++) {
+            String nombre = "Categoria " + i + " - " + identificador;
+            nombres.add(nombre);
+
+            Categoria categoria = new Categoria();
+            categoria.setNombre(nombre);
+            daoCategoria.agregarCategoria(categoria);
+        }
+
+        ArrayList<Categoria> categoriasCargadas = new ArrayList<Categoria>();
+        ArrayList<Categoria> todasLasCategorias = daoCategoria.obtenerTodasLasCategorias();
+
+        for (String nombre : nombres) {
+            Categoria categoria = buscarCategoria(todasLasCategorias, nombre);
+            if (categoria != null) {
+                categoriasCargadas.add(categoria);
+            }
+        }
+
+        System.out.println("Categorias cargadas: " + categoriasCargadas.size() + " de 10.");
+        return categoriasCargadas;
+    }
+
+    private static ArrayList<Producto> cargarDiezProductos(DaoProducto daoProducto,
+                                                            ArrayList<Categoria> categorias,
+                                                            String identificador) {
+        System.out.println("\n===== CARGA DE 10 PRODUCTOS =====");
+        ArrayList<Producto> productos = new ArrayList<Producto>();
+
+        for (int i = 1; i <= 10; i++) {
+            Producto producto = new Producto(
+                    "P" + identificador + i,
+                    "Producto " + i,
+                    100.00 * i,
+                    10 * i,
+                    categorias.get(i - 1).getId()
+            );
+
+            int filas;
+            if (i == 10) {
+                filas = daoProducto.agregarProductoConProcedimiento(producto);
+                System.out.println("Producto 10 cargado mediante sp_AgregarProducto.");
+            } else {
+                filas = daoProducto.agregarProducto(producto);
+            }
+
+            if (filas == 1) {
+                productos.add(producto);
+            }
+        }
+
+        System.out.println("Productos cargados: " + productos.size() + " de 10.");
+        return productos;
+    }
+
+    private static void probarAbmlProductos(DaoProducto daoProducto,
+                                             ArrayList<Producto> productos) {
         System.out.println("\n===== LISTADO DE PRODUCTOS =====");
-
-        ArrayList<Producto> productos = daoProducto.obtenerTodosLosProductos();
-
-        for (Producto p : productos) {
-            System.out.println(p);
+        for (Producto producto : daoProducto.obtenerTodosLosProductos()) {
+            System.out.println(producto);
         }
 
-        // ==========================
-        // MODIFICACIÓN DE PRODUCTO
-        // ==========================
-
-        System.out.println("\n===== MODIFICACIÓN DE PRODUCTO =====");
-
-        producto.setNombre("Shampoo Modificado");
-        producto.setPrecio(1800.50);
-        producto.setStock(25);
-
-        filasProducto = daoProducto.modificarProducto(producto);
-
-        if (filasProducto == 1) {
-            System.out.println("Producto modificado correctamente.");
-        } else {
-            System.out.println("No se pudo modificar el producto.");
+        if (productos.isEmpty()) {
+            System.out.println("No hay productos para probar modificacion y baja.");
+            return;
         }
 
-        // ==========================
-        // LISTADO DESPUÉS DE MODIFICAR
-        // ==========================
+        Producto productoModificar = productos.get(0);
+        productoModificar.setNombre("Producto modificado");
+        productoModificar.setPrecio(999.99);
+        productoModificar.setStock(99);
+        int filas = daoProducto.modificarProducto(productoModificar);
+        System.out.println(filas == 1
+                ? "Modificacion de producto correcta."
+                : "No se pudo modificar el producto.");
 
-        System.out.println("\n===== LISTADO DESPUÉS DE MODIFICAR =====");
+        Producto productoEliminar = productos.get(productos.size() - 1);
+        filas = daoProducto.eliminarProducto(productoEliminar.getCodigo());
+        System.out.println(filas == 1
+                ? "Baja de producto correcta."
+                : "No se pudo eliminar el producto.");
 
-        productos = daoProducto.obtenerTodosLosProductos();
-
-        for (Producto p : productos) {
-            System.out.println(p);
+        System.out.println("\n===== LISTADO FINAL DE PRODUCTOS =====");
+        for (Producto producto : daoProducto.obtenerTodosLosProductos()) {
+            System.out.println(producto);
         }
+    }
 
-        // ==========================
-        // BAJA DE PRODUCTO
-        // ==========================
-        
-        System.out.println("\n===== BAJA DE PRODUCTO =====");
-
-        filasProducto = daoProducto.eliminarProducto(producto.getCodigo());
-
-        if (filasProducto == 1) {
-            System.out.println("Producto eliminado correctamente.");
-        } else {
-            System.out.println("No se pudo eliminar el producto.");
+    private static Categoria buscarCategoria(ArrayList<Categoria> categorias, String nombre) {
+        for (Categoria categoria : categorias) {
+            if (categoria.getNombre().equals(nombre)) {
+                return categoria;
+            }
         }
-
-        // ==========================
-        // LISTADO FINAL DE PRODUCTOS
-        // ==========================
-
-        System.out.println("\n===== LISTADO FINAL PRODUCTOS =====");
-
-        productos = daoProducto.obtenerTodosLosProductos();
-
-        for (Producto p : productos) {
-            System.out.println(p);
-        }
+        return null;
     }
 }
